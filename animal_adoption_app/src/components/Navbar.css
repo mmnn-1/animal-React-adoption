@@ -1,0 +1,81 @@
+.navbar {
+  background: linear-gradient(to right, #f2b233, #ffe3b3);
+  padding: 14px 40px;
+}
+
+/* 整條選單 */
+.nav-list {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* 每個項目 */
+.nav-list li {
+  display: flex;
+  align-items: center;
+}
+
+/* 連結樣式 */
+.navbar a {
+  color: #4a2c00;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 6px 0;
+  position: relative;
+}
+
+/* hover 底線動畫 */
+.navbar a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 3px;
+  background-color: #ff8c42;
+  transition: width 0.3s;
+}
+
+.navbar a:hover::after {
+  width: 100%;
+}
+
+/* 右側區塊（靠右） */
+.nav-right {
+  margin-left: auto;
+  display: flex;
+  gap: 20px;
+}
+
+/* 登出按鈕 */
+.logout-btn {
+  background: none;
+  border: none;
+  font-weight: 600;
+  font-size: 16px;
+  color: #4a2c00;
+  cursor: pointer;
+  position: relative;
+  padding: 6px 0;
+}
+
+/* 登出 hover 底線 */
+.logout-btn::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 3px;
+  background-color: #ff8c42;
+  transition: width 0.3s;
+}
+
+.logout-btn:hover::after {
+  width: 100%;
+}
