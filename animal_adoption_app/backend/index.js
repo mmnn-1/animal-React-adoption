@@ -3,9 +3,12 @@ import cors from 'cors';
 import mysql from 'mysql2';
 import multer from 'multer';
 import path from 'path';
+import bcrypt from 'bcrypt';
+
 
 const app = express();
 const port = 3000;
+const saltRounds = 10;
 
 app.use(cors());  // 這行加上去，允許所有來自不同來源的請求
 
@@ -35,42 +38,48 @@ app.post('/register', (req, res) => {
   const { username, password } = req.body;
 
   // 先檢查帳號是否已存在
-  db.query('SELECT * FROM users WHERE username = ?', [username], (err, results) => {
+  db.query('SELECT * FROM users WHERE username = ?', [username], async(err, results) => {
     if (err) return res.status(500).send('資料庫錯誤');
 
     if (results.length > 0) {
       return res.status(400).send('帳號已存在');
     }
-
-    // 新增帳號
-    db.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, password], (err, results) => {
+    try {
+      //雜湊密碼
+      const hashed = await bcrypt.hash(password,saltRounds);
+      // 新增帳號
+    db.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, hashed], (err, results) => {
       if (err) return res.status(500).send('註冊失敗');
       res.send('註冊成功');
     });
+    } catch (error) {
+      res.status(500).send('伺服器錯誤');
+    }
+    
+    });
   });
-});
+
 
 // 登入 API
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
   db.query(
-    'SELECT  id,username,role FROM users WHERE username = ? AND password = ?',
-    [username, password],
-    (err, results) => {
-      if (err) return res.status(500).send('資料庫錯誤');
+    'SELECT  id,username,password,role FROM users WHERE username = ?',
+    [username],
+    async(err, results) => {
+    if (err) return res.status(500).send('資料庫錯誤');
+    if(results.length===0)return res.status(401).send('帳號或密碼錯誤')
+    const user = results[0];
 
-      if (results.length > 0) {
-        const user = results[0];
-        return res.json ({
-          msg:"登入成功",
-          userId:user.id,
-         role:user.role
-      });
-    }
-   return res.status(401).send('帳號或密碼錯誤')
-    }
-  );
+    const match = await bcrypt.compare(password,user.password);
+    if(!match)return res.status(401).send('帳號或密碼錯誤');
+    res.json({
+      msg:"登入成功",
+      userId:user.id,
+      role:user.role
+    });
+    });
 });
 //圖片上傳設定
 
