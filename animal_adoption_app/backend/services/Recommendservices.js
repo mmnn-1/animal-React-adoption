@@ -79,7 +79,7 @@ export function calculateScore(animal,formData){
   }
 
   //traits 多選
-  if(Array.isArray(formData.traits)){
+  if(Array.isArray(formData.traits)&&Array.isArray(animal.traits)){
     formData.traits.forEach((trait)=>{
         if(animal.traits?.includes(trait)){
             score+=5;
@@ -89,8 +89,11 @@ export function calculateScore(animal,formData){
     });
   
 }
+console.log("reasons:", reasons);
 return {
     score:Math.round(score),
     reasons,//前端可顯示為什麼推薦
-};
 }
+
+
+};

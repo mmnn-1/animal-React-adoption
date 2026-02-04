@@ -17,7 +17,7 @@ function Login() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/login", { // 注意後端 port
+      const res = await fetch("http://localhost:3000/user/login", { // 注意後端 port
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: loginUsername, password: loginPassword })
@@ -58,7 +58,7 @@ function Login() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/register", {
+      const res = await fetch("http://localhost:3000/user/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: registerUsername, password: registerPassword })

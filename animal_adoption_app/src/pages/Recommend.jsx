@@ -11,6 +11,7 @@ router.post("/", async (req, res) => {
     const animals = await getAllAnimals();
 
     const results = animals.map((animal) => {
+      animal.traits = animal.traits?animal.traits.split(','):[];
       const { score, reasons } = calculateScore(animal, formData);
       return {
         ...animal,

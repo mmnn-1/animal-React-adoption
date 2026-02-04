@@ -1,39 +1,39 @@
 import { useState } from "react";
-import"./recommendForm.css";
+import "./recommendForm.css";
 
-
-const TRAITS=[
-    {id : 1,key:"friendly",label:"親人"},
-    {id : 2,key:"active",label:"活潑"},
-    {id : 3,key:"calm",label:"安靜"},
-    {id : 4,key:"good_with_kids",label:"適合小孩"},
-    {id : 5,key:"low_barking",label:"不愛叫"},
-
+const TRAITS = [
+  { id: 1, key: "friendly", label: "親人" },
+  { id: 2, key: "active", label: "活潑" },
+  { id: 3, key: "calm", label: "安靜" },
+  { id: 4, key: "good_with_kids", label: "適合小孩" },
+  { id: 5, key: "low_barking", label: "不愛叫" },
 ];
 
-export default function Recommend(){
-    const [formData,setFormData] = useState({
-        type:"",
-        avg_monthly_cost:"3000",
-        activity_level:"low",
-        space_requirement:"low",
-        noice_level:"low",
-        shedding_level:"low",
-        time_commitment:"low",
-        suitable_for:"beginner",
-        traits:[],
-    });
-    const [results,setResults]=useState([]);
-    //表單欄位改變
-    const handleChange=(e)=>{
-        const {name,value}=e.target;
-        setFormData((prev)=>({...prev,[name]:value}));
-    };
-    //checkbox多選
+export default function Recommend() {
+  const [formData, setFormData] = useState({
+    type: "",
+    avg_monthly_cost: "3000",
+    activity_level: "low",
+    space_requirement: "low",
+    noice_level: "low",
+    shedding_level: "low",
+    time_commitment: "low",
+    suitable_for: "beginner",
+    traits: [],
+  });
 
-    const handleCheckboxChange=(e)=>{
-        const {value,checked}=e.target;
-       setFormData((prev) => ({
+  const [results, setResults] = useState([]);
+
+  // 表單欄位改變
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // checkbox 多選
+  const handleCheckboxChange = (e) => {
+    const { value, checked } = e.target;
+    setFormData((prev) => ({
       ...prev,
       traits: checked
         ? [...prev.traits, value]
@@ -51,9 +51,8 @@ export default function Recommend(){
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      console.log("fetch 回傳狀態：", res.status);
-      setResults(data); // 後端回傳包含 score 的推薦結果
-       console.log("fetch 回傳資料：", data);
+      console.log("fetch 回傳資料：", data);
+      setResults(data);
     } catch (err) {
       console.error(err);
       alert("推薦出現錯誤");
@@ -63,8 +62,11 @@ export default function Recommend(){
   return (
     <div className="recommend-container">
       <h1>🐾 適合你的寵物推薦</h1>
-      <p className="subtitle">回答以下問題，我會推薦適合你的動物</p>
+      <p className="subtitle">
+        回答以下問題，我會推薦適合你的動物
+      </p>
 
+      {/* 問卷表單 */}
       <form onSubmit={handleSubmit}>
         {/* 基本條件 */}
         <section>
@@ -197,18 +199,22 @@ export default function Recommend(){
               .slice(0, 3)
               .map((animal) => (
                 <div key={animal.id} className="animal-card">
-                  <img
-                    src={`http://localhost:3000${animal.image_url}`}
-                    alt={animal.breed}
-                  />
                   <h3>
                     {animal.breed} ({animal.type})
                   </h3>
-                  <p>年齡：{animal.age}</p>
-                  <p>性別：{animal.gender}</p>
-                  <p>每月費用：{animal.monthly_cost}</p>
-                  <p>收容所：{animal.shelter_name}</p>
                   <p>推薦分數：{animal.score}</p>
+
+                  {/* 推薦理由 */}
+                  {animal.reasons && animal.reasons.length > 0 && (
+                    <div className="reasons">
+                      <strong>推薦理由：</strong>
+                      <ul>
+                        {animal.reasons.map((reason, i) => (
+                          <li key={i}>{reason}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               ))}
           </div>
@@ -217,6 +223,3 @@ export default function Recommend(){
     </div>
   );
 }
-    
-
-

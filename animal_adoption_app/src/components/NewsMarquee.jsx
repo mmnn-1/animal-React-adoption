@@ -6,7 +6,7 @@ export default function NewsMarquee() {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const res = await fetch("http://localhost:3000/news");
+        const res = await fetch("http://localhost:3000/admin/news");
         const data = await res.json();
         setNewsList(data);
       } catch (err) {

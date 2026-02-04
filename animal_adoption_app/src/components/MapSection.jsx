@@ -1,19 +1,34 @@
 
 import {MapContainer,TileLayer,Marker,Popup}from "react-leaflet";
 import { useEffect, useState } from "react";
-//import L from "leaflet";
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
+delete L.Icon.Default.prototype._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
 
 function MapSection() {
  
     const [shelters,setShelters] = useState([]);
 
-    useEffect(()=>{
-      fetch("http://localhost:3000/shelters")
-      .then(res=>res.json())
-      .then(data=>setShelters(data))
-      .catch(err=>console.error(err));
-    },[]);
+  useEffect(() => {
+  fetch("http://localhost:3000/admin/shelters")
+    .then(res => res.json())
+    .then(data => {
+      console.log("API shelters data:", data);
+      setShelters(data);
+    })
+    .catch(err => console.error(err));
+}, []);
+
     return (
       <MapContainer
       center={[23.9678,120.9605]}
