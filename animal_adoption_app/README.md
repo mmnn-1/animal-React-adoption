@@ -1,16 +1,21 @@
-# React + Vite
+# 動物收養平台（Animal Adoption Platform）
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 專案介紹
+一個使用 React + Vite 開發的前端網站，提供使用者瀏覽動物資訊、
+填寫問卷並取得推薦結果。
 
-Currently, two official plugins are available:
+## 使用技術
+- React
+- Vite
+- React Router
+- Fetch API
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 功能
+- 動物列表瀏覽
+- 問卷推薦系統
+- 地圖顯示收容所位置
 
-## React Compiler
+## 啟動方式
+npm install
+npm run dev
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
