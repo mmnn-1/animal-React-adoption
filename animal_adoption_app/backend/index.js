@@ -5,6 +5,7 @@ import animalRoutes from './routes/animals.js';
 import adminRoutes from './routes/admin.js';
 import { serveUploads } from './middlewares/upload.js';
 import recommendRoutes from "./routes/recommend.js";
+import adoptRouter from './routes/adopt.js';
 
 
 
@@ -22,5 +23,7 @@ app.use('/user', userRoutes);
 app.use('/animals', animalRoutes);
 app.use('/admin', adminRoutes);
 app.use("/api", recommendRoutes);
+app.use('/', adoptRouter);
+
 // 啟動
 app.listen(port, () => console.log(`後端服務啟動：http://localhost:${port}`));

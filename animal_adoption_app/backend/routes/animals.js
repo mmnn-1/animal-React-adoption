@@ -29,17 +29,6 @@ router.get('/', (req, res) => {
   });
 });
 
-// 領養
-router.post('/adopt', (req, res) => {
-  const { user_id, animal_id } = req.body;
-  db.query("INSERT INTO adoptions(user_id, animal_id) VALUES (?, ?)", [user_id, animal_id], (err) => {
-    if (err) return res.status(500).json({ error: err });
-    db.query("UPDATE animals SET adopted=1 WHERE id=?", [animal_id], (err2) => {
-      if (err2) return res.status(500).json({ error: err2 });
-      res.json({ msg: "領養成功!" });
-    });
-  });
-});
 
 // 推薦 API
 router.post('/recommend', (req, res) => {

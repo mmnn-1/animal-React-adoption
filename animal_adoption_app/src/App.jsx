@@ -1,6 +1,6 @@
 // App.jsx
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import AdminNews from "./pages/AdminNews.jsx";  // <- 注意路徑和檔名
+import { HashRouter, Routes, Route } from "react-router-dom";
+import AdminNews from "./pages/AdminNews.jsx";  
 import Dashboard from "./pages/DashBoard.jsx";
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
@@ -10,7 +10,7 @@ import Recommend from "./components/RecommendForm.jsx";
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/admin/news" element={<AdminNews />} />
@@ -20,7 +20,7 @@ function App() {
         <Route path="/recommend"element={<Recommend/>}/>
         <Route path="/login" element={<Login />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
