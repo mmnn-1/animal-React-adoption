@@ -1,4 +1,5 @@
-
+import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import userRoutes from './routes/user.js';
@@ -11,7 +12,7 @@ import adoptRouter from './routes/adopt.js';
 
 
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -27,4 +28,6 @@ app.use("/api", recommendRoutes);
 app.use('/', adoptRouter);
 
 // 啟動
-app.listen(port, () => console.log(`後端服務啟動：http://localhost:${port}`));
+app.listen(PORT, () => {
+  console.log(`後端服務啟動：http://localhost:${PORT}`);
+});
