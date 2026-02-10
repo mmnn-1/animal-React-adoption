@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css"; // 單獨 CSS
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 function Login() {
   const [loginUsername, setLoginUsername] = useState("");
@@ -17,7 +18,7 @@ function Login() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/user/login", { // 注意後端 port
+      const res = await fetch(`${API_BASE_URL}/user/login`, { // 注意後端 port
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: loginUsername, password: loginPassword })
@@ -58,7 +59,7 @@ function Login() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/user/register", {
+      const res = await fetch(`${API_BASE_URL}/user/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: registerUsername, password: registerPassword })

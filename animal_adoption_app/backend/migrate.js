@@ -5,11 +5,11 @@ dotenv.config();  // 確保載入 .env
 
 // 建立連線池
 const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-  port: Number(process.env.DB_PORT), // port 一定要數字
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
+  database: process.env.MYSQL_DATABASE,
+  port: Number(process.env.MYSQL_PORT), // port 一定要數字
   multipleStatements: true,           // 允許同時執行多條 SQL
 });
 

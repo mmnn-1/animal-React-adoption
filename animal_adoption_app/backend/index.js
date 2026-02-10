@@ -29,5 +29,5 @@ app.use('/', adoptRouter);
 
 // 啟動
 app.listen(PORT, () => {
-  console.log(`後端服務啟動：http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

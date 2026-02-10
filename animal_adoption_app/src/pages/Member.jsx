@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Member.css";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 function Member() {
   const [adoptions, setAdoptions] = useState([]);
   const userId = localStorage.getItem("userId");
@@ -8,7 +9,7 @@ function Member() {
   useEffect(() => {
     if (!userId) return;
 
-    fetch(`http://localhost:3000/my-adoptions?user_id=${userId}`)
+    fetch(`${API_BASE_URL}/my-adoptions?user_id=${userId}`)
       .then(res => res.json())
       .then(data => setAdoptions(data))
       .catch(err => console.error(err));
@@ -30,8 +31,8 @@ function Member() {
               <img
                 src={
                   a.image_url
-                    ? `http://localhost:3000${a.image_url}`
-                    : "http://localhost:3000/uploads/no-image.png"
+                    ? `${API_BASE_URL}${a.image_url}`
+                    : `${API_BASE_URL}/uploads/no-image.png`
                 }
                 alt={a.breed}
               />

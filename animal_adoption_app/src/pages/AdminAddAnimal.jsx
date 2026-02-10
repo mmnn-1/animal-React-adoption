@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminAddAnimal.css";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function AdminAddAnimal() {
   const navigate = useNavigate();
   const formRef = useRef(null);
+
   const [shelters, setShelters] = useState([]);
   const TRAITS = [
   { id: 1, key: "friendly", label: "親人" },
@@ -32,7 +34,7 @@ export default function AdminAddAnimal() {
   }, []);
 
   const loadShelters = async () => {
-    const res = await fetch("http://localhost:3000/admin/shelters");
+    const res = await fetch(`${API_BASE_URL}/admin/shelters`);
     const data = await res.json();
     setShelters(data);
   };
@@ -41,7 +43,7 @@ export default function AdminAddAnimal() {
   const submitAnimal = async () => {
     const formData = new FormData(formRef.current);
 
-    const res = await fetch("http://localhost:3000/admin/animals", {
+    const res = await fetch(`${API_BASE_URL}admin/animals`, {
       method: "POST",
       body: formData,
     });

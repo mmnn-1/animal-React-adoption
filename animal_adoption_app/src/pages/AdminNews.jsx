@@ -1,13 +1,14 @@
 
 // AdminNews.jsx
 import React, { useState, useEffect } from "react";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function AdminNews() {
   const [newsContent, setNewsContent] = useState("");
   const [newsList, setNewsList] = useState([]);
 
   const loadNews = async () => {
-    const res = await fetch("http://localhost:3000/admin/news");
+    const res = await fetch(`${API_BASE_URL}/admin/news`);
     const data = await res.json();
     setNewsList(data);
   };
@@ -18,7 +19,7 @@ export default function AdminNews() {
       return;
     }
 
-    const res = await fetch("http://localhost:3000/admin/news", {
+    const res = await fetch(`${API_BASE_URL}/admin/news`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ content: newsContent })
