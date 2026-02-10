@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function NewsMarquee() {
   const [newsList, setNewsList] = useState([]);
@@ -6,7 +7,7 @@ export default function NewsMarquee() {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const res = await fetch("http://localhost:3000/admin/news");
+        const res = await fetch(`${API_BASE_URL}/admin/news`);
         const data = await res.json();
         setNewsList(data);
       } catch (err) {

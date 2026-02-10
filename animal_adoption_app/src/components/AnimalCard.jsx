@@ -1,10 +1,11 @@
 import './AnimalCard.css';
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 function AnimalCard({ animal, adopt }) {
   return (
     <div className="animal-card">
       <div className='image-wrapper'>
-        <img src={`http://localhost:3000${animal.image_url}`} alt={animal.breed} />
+        <img src={`${API_BASE_URL}${animal.image_url}`} alt={animal.breed} />
       </div>
       <h3>{animal.breed} ({animal.type})</h3>
       <p>年齡：{animal.age}</p>

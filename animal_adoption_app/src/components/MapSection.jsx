@@ -7,6 +7,8 @@ import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -20,7 +22,7 @@ function MapSection() {
     const [shelters,setShelters] = useState([]);
 
   useEffect(() => {
-  fetch("http://localhost:3000/admin/shelters")
+  fetch(`${API_BASE_URL}/admin/shelters`)
     .then(res => res.json())
     .then(data => {
       console.log("API shelters data:", data);
