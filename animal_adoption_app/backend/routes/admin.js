@@ -7,7 +7,7 @@ const router = express.Router();
 
 // multer
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'upload/'),
+  destination: (req, file, cb) => cb(null, 'uploads/'),
   filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
 });
 const upload = multer({ storage });
@@ -15,7 +15,7 @@ const upload = multer({ storage });
 // 新增動物
 router.post('/animals', upload.single('image'), (req, res) => {
   const { type, breed, age, size, gender, monthly_cost, shelter_id } = req.body;
-  const image_url = req.file ? `/upload/${req.file.filename}` : null;
+  const image_url = req.file ? `/uploads/${req.file.filename}` : null;
 
   const sql = `INSERT INTO animals(type, breed, age, size, gender, monthly_cost, image_url, shelter_id, adopted)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)`;
