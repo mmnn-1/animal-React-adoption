@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // 真正的 uploads 絕對路徑
-const uploadPath = path.join(__dirname, '../../uploads');
+const uploadPath = path.join(__dirname, '../uploads');
 
 // multer 設定
 const storage = multer.diskStorage({
