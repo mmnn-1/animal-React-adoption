@@ -1,13 +1,19 @@
 import express from 'express';
+import multer from 'multer';
+import path from 'path';
 import { db } from '../db.js';
-import { upload } from '../middlewares/upload.js'; 
+
 const router = express.Router();
 
+// multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'upload/'),
+  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+});
+const upload = multer({ storage });
 
 // 新增動物
 router.post('/animals', upload.single('image'), (req, res) => {
-  console.log("req.body:", req.body);
-  console.log("req.file:", req.file);
   const { type, breed, age, size, gender, monthly_cost, shelter_id } = req.body;
   const image_url = req.file ? `/uploads/${req.file.filename}` : null;
 
@@ -15,9 +21,7 @@ router.post('/animals', upload.single('image'), (req, res) => {
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)`;
 
   db.query(sql, [type, breed, age, size, gender, monthly_cost || null, image_url, shelter_id], (err, result) => {
-    if (err) {
-      console.error("SQL錯誤:", err);
-      return res.status(500).json({ error: err });}
+    if (err) return res.status(500).json({ error: err });
     const animalId = result.insertId;
 
     let traitList = [];
@@ -28,25 +32,6 @@ router.post('/animals', upload.single('image'), (req, res) => {
     });
 
     res.json({ message: '動物新增成功', animal_id: animalId });
-  });
-});
-router.get('/animals', (req, res) => {
-  const sql = `
-    SELECT 
-      a.*,
-      s.name AS shelter_name
-    FROM animals a
-    LEFT JOIN shelters s ON a.shelter_id = s.id
-    ORDER BY a.id DESC
-  `;
-
-  db.query(sql, (err, results) => {
-    if (err) {
-      console.error("讀取動物錯誤:", err);
-      return res.status(500).json({ error: "資料庫錯誤" });
-    }
-
-    res.json(results);
   });
 });
 

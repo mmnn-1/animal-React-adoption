@@ -1,28 +1,17 @@
 import multer from 'multer';
 import path from 'path';
 import express from 'express';
-import { fileURLToPath } from 'url';
 
-// 取得目前資料夾路徑（ES Module 專用）
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// 真正的 uploads 絕對路徑
-const uploadPath = path.join(__dirname, '../uploads');
-
-// multer 設定
+// multer 儲存設定
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
+  destination: (req, file, cb) => cb(null, 'uploads/'), // 上傳資料夾
+  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
 });
 
+// 產生 middleware
 export const upload = multer({ storage });
 
-// 對外公開 uploads
+// 對外公開資料夾
 export const serveUploads = (app) => {
-  app.use('/uploads', express.static(uploadPath));
+  app.use('/uploads', express.static('uploads'));
 };
