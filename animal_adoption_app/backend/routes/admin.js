@@ -34,6 +34,25 @@ router.post('/animals', upload.single('image'), (req, res) => {
     res.json({ message: '動物新增成功', animal_id: animalId });
   });
 });
+router.get('/animals', (req, res) => {
+  const sql = `
+    SELECT 
+      a.*,
+      s.name AS shelter_name
+    FROM animals a
+    LEFT JOIN shelters s ON a.shelter_id = s.id
+    ORDER BY a.id DESC
+  `;
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("讀取動物錯誤:", err);
+      return res.status(500).json({ error: "資料庫錯誤" });
+    }
+
+    res.json(results);
+  });
+});
 
 // 新增公告
 router.post('/news', (req, res) => {

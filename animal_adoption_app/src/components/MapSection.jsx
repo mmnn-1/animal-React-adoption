@@ -8,6 +8,7 @@ import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
+console.log("API_BASE_URL:", import.meta.env.VITE_API_URL);
 
 delete L.Icon.Default.prototype._getIconUrl;
 

@@ -3,6 +3,7 @@ import AnimalCard from "./AnimalCard"; // 注意路徑
 import { useNavigate } from "react-router-dom";
 import './AnimalCard.css';
 const API_BASE_URL = import.meta.env.VITE_API_URL;
+console.log("API_BASE_URL:", import.meta.env.VITE_API_URL);
 
 
 
