@@ -38,7 +38,7 @@ router.post('/animals', upload.single('image'), (req, res) => {
   });
 });
 // 取得動物列表
-router.get('/admin/animals', (req, res) => {
+router.get('/animals', (req, res) => {
   const sql = `
     SELECT a.*, s.name AS shelter_name
     FROM animals a
