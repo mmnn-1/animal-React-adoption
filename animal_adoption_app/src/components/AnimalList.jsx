@@ -11,7 +11,7 @@ const AnimalList = () => {
   const [animals, setAnimals] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
-    fetch(`${API_BASE_URL}/animals`)
+    fetch(`${API_BASE_URL}/admin/animals`)
       .then(res => res.json())
       .then(data => setAnimals(data))
       .catch(err => console.error(err));
@@ -24,11 +24,11 @@ const AnimalList = () => {
       return;
     }
     const userId = localStorage.getItem("userId");
-    fetch(`${API_BASE_URL}/adopt`), {
+    fetch(`${API_BASE_URL}/adopt`,{
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: userId, animal_id: id })
-    }
+    })
     .then(res => res.json())
     .then(() => {
       alert(`你已成功領養 ${breed}！感謝你的愛心 💖`);
