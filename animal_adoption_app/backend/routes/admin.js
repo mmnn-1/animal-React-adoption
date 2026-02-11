@@ -6,6 +6,8 @@ const router = express.Router();
 
 // 新增動物
 router.post('/animals', upload.single('image'), (req, res) => {
+  console.log("req.body:", req.body);
+  console.log("req.file:", req.file);
   const { type, breed, age, size, gender, monthly_cost, shelter_id } = req.body;
   const image_url = req.file ? `/uploads/${req.file.filename}` : null;
 
@@ -13,7 +15,9 @@ router.post('/animals', upload.single('image'), (req, res) => {
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)`;
 
   db.query(sql, [type, breed, age, size, gender, monthly_cost || null, image_url, shelter_id], (err, result) => {
-    if (err) return res.status(500).json({ error: err });
+    if (err) {
+      console.error("SQL錯誤:", err);
+      return res.status(500).json({ error: err });}
     const animalId = result.insertId;
 
     let traitList = [];
