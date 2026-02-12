@@ -6,7 +6,7 @@ function AnimalCard({ animal, adopt }) {
   return (
     <div className="animal-card">
       <div className='image-wrapper'>
-        <img src={`${API_BASE_URL}${animal.image_url}`} alt={animal.breed} />
+        <img src={animal.image_url} alt={animal.breed} />
       </div>
       <h3>{animal.breed} ({animal.type})</h3>
       <p>年齡：{animal.age}</p>
