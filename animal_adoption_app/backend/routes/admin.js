@@ -1,21 +1,16 @@
 import express from 'express';
-import multer from 'multer';
-import path from 'path';
 import { db } from '../db.js';
-
+import { upload } from '../cloudinary.js';
 const router = express.Router();
 
-// multer
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'upload/'),
-  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
-});
-const upload = multer({ storage });
+
+
 
 // 新增動物
 router.post('/animals', upload.single('image'), (req, res) => {
   const { type, breed, age, size, gender, monthly_cost, shelter_id } = req.body;
-  const image_url = req.file ? `/uploads/${req.file.filename}` : null;
+   const image_url = req.file ? req.file.path : null;
+
 
   const sql = `INSERT INTO animals(type, breed, age, size, gender, monthly_cost, image_url, shelter_id, adopted)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)`;
@@ -38,7 +33,7 @@ router.post('/animals', upload.single('image'), (req, res) => {
   });
 });
 // 取得動物列表
-router.get('/animals', (req, res) => {
+router.get('/admin/animals', (req, res) => {
   const sql = `
     SELECT a.*, s.name AS shelter_name
     FROM animals a
