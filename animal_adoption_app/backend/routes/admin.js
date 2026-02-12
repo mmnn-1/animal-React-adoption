@@ -11,10 +11,18 @@ router.post('/', async (req, res) => {
     console.log("收到 POST /admin /req.body:", req.body);
 
     const { type, breed, age, size, gender, monthly_cost, shelter_id, traits } = req.body;
+if (
+  type == null || 
+  breed == null || 
+  age == null || 
+  size == null || 
+  gender == null || 
+  monthly_cost == null || 
+  shelter_id == null
+) {
+  return res.status(400).json({ error: "缺少必要欄位" });
+}
 
-    if (!type || !breed || !age || !size || !gender || !shelter_id) {
-      return res.status(400).json({ error: "缺少必要欄位" });
-    }
 
     const sql = `
       INSERT INTO animals(type, breed, age, size, gender, monthly_cost, shelter_id, adopted)
