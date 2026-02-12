@@ -1,18 +1,9 @@
 import express from 'express';
-import multer from 'multer';
-import path from 'path';
 import { db } from '../db.js';
 import { calculateScore } from '../services/Recommendservices.js';
 
 const router = express.Router();
 
-// multer 設定
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'upload/'),
-  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
-});
-const upload = multer({ storage });
-router.use('/uploads', express.static('upload'));
 
 // 取得所有動物
 router.get('/', (req, res) => {
