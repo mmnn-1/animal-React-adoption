@@ -34,7 +34,7 @@ export default function AdminAddAnimal() {
   }, []);
 
   const loadShelters = async () => {
-    const res = await fetch(`${API_BASE_URL}/shelters`);
+    const res = await fetch(`${API_BASE_URL}/admin/shelters`);
     const data = await res.json();
     setShelters(data);
   };
