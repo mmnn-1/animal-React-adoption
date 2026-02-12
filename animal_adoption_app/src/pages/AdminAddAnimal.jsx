@@ -43,7 +43,7 @@ export default function AdminAddAnimal() {
   const submitAnimal = async () => {
     const formData = new FormData(formRef.current);
 
-    const res = await fetch(`${API_BASE_URL}/admin/animals`, {
+    const res = await fetch(`${API_BASE_URL}/animals`, {
       method: "POST",
       body: formData,
     });
