@@ -39,30 +39,33 @@ export default function AdminAddAnimal() {
     setShelters(data);
   };
 
-const submitAnimal = async () => {
+ const submitAnimal = async () => {
   try {
     const formData = new FormData(formRef.current);
 
-    // 送出 POST /animals
+    // 暫時先不要傳圖片，避免 Cloudinary 導致 500
+    formData.delete("image");
+
+    // 送到 /admin，對應後端 router.post('/', ...) 
     const res = await fetch(`${API_BASE_URL}/admin`, {
       method: "POST",
       body: formData,
     });
 
-    if (!res.ok) { // 處理 404 / 500
-      const errMsg = await res.text();
-      throw new Error(errMsg);
+    const data = await res.json(); // 這裡改成 json
+    if (res.ok) {
+      alert(data.message);          // 成功訊息
+      formRef.current.reset();
+    } else {
+      alert("新增動物失敗: " + (data.error || "未知錯誤"));
+      console.error("新增動物錯誤:", data);
     }
-
-    const data = await res.json(); //  正確解析 JSON
-    alert(data.message);           // 顯示後端訊息
-    formRef.current.reset();
-
   } catch (err) {
-    console.error("新增動物失敗:", err);
-    alert("新增動物失敗：" + err.message);
+    console.error("新增動物 catch 錯誤:", err);
+    alert("新增動物失敗，請查看 console");
   }
 };
+
 
   return (
     <div className="admin-container">

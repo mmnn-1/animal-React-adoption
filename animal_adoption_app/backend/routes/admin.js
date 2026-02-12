@@ -1,37 +1,64 @@
 import express from 'express';
 import { db } from '../db.js';
-import { upload } from '../cloudinary.js';
+//import { upload } from '../cloudinary.js';
 const router = express.Router();
 
 
 
 
-// 新增動物
-router.post('/', upload.single('image'), (req, res) => {
-  const { type, breed, age, size, gender, monthly_cost, shelter_id } = req.body;
-   const image_url = req.file ? req.file.path : null;
+router.post('/', async (req, res) => {
+  try {
+    console.log("收到 POST /admin /req.body:", req.body);
 
+    const { type, breed, age, size, gender, monthly_cost, shelter_id, traits } = req.body;
 
-  const sql = `INSERT INTO animals(type, breed, age, size, gender, monthly_cost, image_url, shelter_id, adopted)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)`;
-
-  db.query(sql, [type, breed, age, size, gender, monthly_cost || null, image_url, shelter_id], (err, result) => {
-    if (err) {
-      console.error("SQL 新增動物錯誤:", err);
-      return res.status(500).json({ error: err.message });
+    if (!type || !breed || !age || !size || !gender || !shelter_id) {
+      return res.status(400).json({ error: "缺少必要欄位" });
     }
 
-    const animalId = result.insertId;
+    const sql = `
+      INSERT INTO animals(type, breed, age, size, gender, monthly_cost, shelter_id, adopted)
+      VALUES (?, ?, ?, ?, ?, ?, ?, 0)
+    `;
 
-    let traitList = [];
-    if (req.body.traits) traitList = Array.isArray(req.body.traits) ? req.body.traits : [req.body.traits];
-    traitList.forEach(traitID => {
-      if (traitID) db.query('INSERT INTO animal_traits (animal_id, trait_id) VALUES (?, ?)', [animalId, traitID]);
-    });
+    db.query(
+      sql,
+      [type, breed, age, size, gender, monthly_cost || null, shelter_id],
+      (err, result) => {
+        if (err) {
+          console.error("SQL 新增動物錯誤:", err);
+          return res.status(500).json({ error: err.message });
+        }
 
-    res.json({ message: '動物新增成功', animal_id: animalId });
-  });
+        const animalId = result.insertId;
+        console.log("新增動物成功, ID:", animalId);
+
+        // 處理 traits
+        let traitList = [];
+        if (traits) {
+          traitList = Array.isArray(traits) ? traits : [traits];
+          traitList.forEach(traitID => {
+            if (traitID) {
+              db.query(
+                'INSERT INTO animal_traits (animal_id, trait_id) VALUES (?, ?)',
+                [animalId, traitID],
+                (err) => {
+                  if (err) console.error("新增 trait 失敗", err);
+                }
+              );
+            }
+          });
+        }
+
+        res.json({ message: "動物新增成功 (暫無圖片)", animal_id: animalId });
+      }
+    );
+  } catch (error) {
+    console.error("POST /admin 發生錯誤:", error);
+    res.status(500).json({ error: error.message });
+  }
 });
+
 // 取得動物列表
 router.get('/', (req, res) => {
   const sql = `
