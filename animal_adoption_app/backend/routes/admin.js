@@ -7,7 +7,7 @@ const router = express.Router();
 
 
 // 新增動物
-router.post('/animals', upload.single('image'), (req, res) => {
+router.post('/', upload.single('image'), (req, res) => {
   const { type, breed, age, size, gender, monthly_cost, shelter_id } = req.body;
    const image_url = req.file ? req.file.path : null;
 
