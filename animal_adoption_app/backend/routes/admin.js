@@ -1,37 +1,86 @@
-import express from 'express';
-import { db } from '../db.js';
-//import { upload } from '../cloudinary.js';
+import express from "express";
+import { db } from "../db.js";
+import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
+import streamifier from "streamifier";
+
 const router = express.Router();
 
+// Multer memory storage (不存本地)
+const upload = multer();
 
+// Cloudinary 設定
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
+});
 
-
-router.post('/', async (req, res) => {
+// -----------------------------
+// 新增動物（含圖片 + traits）
+// -----------------------------
+router.post("/", upload.single("image"), async (req, res) => {
   try {
-    console.log("收到 POST /admin /req.body:", req.body);
+    const {
+      type,
+      breed,
+      age,
+      size,
+      gender,
+      monthly_cost,
+      shelter_id,
+      traits,
+    } = req.body;
 
-    const { type, breed, age, size, gender, monthly_cost, shelter_id, traits } = req.body;
-if (
-  type == null || 
-  breed == null || 
-  age == null || 
-  size == null || 
-  gender == null || 
-  monthly_cost == null || 
-  shelter_id == null
-) {
-  return res.status(400).json({ error: "缺少必要欄位" });
-}
+    // 必填欄位檢查
+    if (
+      type == null ||
+      breed == null ||
+      age == null ||
+      size == null ||
+      gender == null ||
+      monthly_cost == null ||
+      shelter_id == null
+    ) {
+      return res.status(400).json({ error: "缺少必要欄位" });
+    }
 
+    const monthlyCostNum = Number(monthly_cost);
+    const shelterIdNum = Number(shelter_id);
 
+    // traits 可能是一個字串或陣列
+    let traitList = traits || [];
+    if (!Array.isArray(traitList)) traitList = [traitList];
+
+    // -----------------------------
+    // 圖片上傳到 Cloudinary
+    // -----------------------------
+    let imageUrl = null;
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: "animals" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
+      });
+      imageUrl = result.secure_url;
+    }
+
+    // -----------------------------
+    // 新增 animals
+    // -----------------------------
     const sql = `
-      INSERT INTO animals(type, breed, age, size, gender, monthly_cost, shelter_id, adopted)
-      VALUES (?, ?, ?, ?, ?, ?, ?, 0)
+      INSERT INTO animals(type, breed, age, size, gender, monthly_cost, shelter_id, image_url, adopted)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)
     `;
 
     db.query(
       sql,
-      [type, breed, age, size, gender, monthly_cost || null, shelter_id],
+      [type, breed, age, size, gender, monthlyCostNum, shelterIdNum, imageUrl],
       (err, result) => {
         if (err) {
           console.error("SQL 新增動物錯誤:", err);
@@ -39,26 +88,27 @@ if (
         }
 
         const animalId = result.insertId;
-        console.log("新增動物成功, ID:", animalId);
 
-        // 處理 traits
-        let traitList = [];
-        if (traits) {
-          traitList = Array.isArray(traits) ? traits : [traits];
-          traitList.forEach(traitID => {
-            if (traitID) {
-              db.query(
-                'INSERT INTO animal_traits (animal_id, trait_id) VALUES (?, ?)',
-                [animalId, traitID],
-                (err) => {
-                  if (err) console.error("新增 trait 失敗", err);
-                }
-              );
-            }
-          });
-        }
+        // -----------------------------
+        // 新增 animal_traits
+        // -----------------------------
+        traitList.forEach((traitID) => {
+          if (traitID) {
+            db.query(
+              "INSERT INTO animal_traits (animal_id, trait_id) VALUES (?, ?)",
+              [animalId, traitID],
+              (err) => {
+                if (err) console.error("新增 trait 失敗", err);
+              }
+            );
+          }
+        });
 
-        res.json({ message: "動物新增成功 (暫無圖片)", animal_id: animalId });
+        res.json({
+          message: "動物新增成功",
+          animal_id: animalId,
+          imageUrl,
+        });
       }
     );
   } catch (error) {
@@ -67,15 +117,17 @@ if (
   }
 });
 
+// -----------------------------
 // 取得動物列表
-router.get('/', (req, res) => {
+// -----------------------------
+router.get("/", (req, res) => {
   const sql = `
     SELECT a.*, s.name AS shelter_name
     FROM animals a
     LEFT JOIN shelters s ON a.shelter_id = s.id
     ORDER BY a.id DESC
   `;
-  
+
   db.query(sql, (err, results) => {
     if (err) {
       console.error("SQL 讀取 animals 錯誤:", err);
@@ -85,9 +137,10 @@ router.get('/', (req, res) => {
   });
 });
 
-
+// -----------------------------
 // 新增公告
-router.post('/news', (req, res) => {
+// -----------------------------
+router.post("/news", (req, res) => {
   const { content } = req.body;
   if (!content) return res.status(400).json({ error: "內容不可為空" });
 
@@ -100,19 +153,26 @@ router.post('/news', (req, res) => {
   });
 });
 
+// -----------------------------
 // 取得公告列表
-router.get('/news', (req, res) => {
-  db.query("SELECT content FROM news ORDER BY created_at DESC", (err, results) => {
-    if (err) {
-      console.error("SQL 讀取公告錯誤:", err);
-      return res.status(500).json([]); // 回傳空陣列，前端 map 不會炸
+// -----------------------------
+router.get("/news", (req, res) => {
+  db.query(
+    "SELECT content FROM news ORDER BY created_at DESC",
+    (err, results) => {
+      if (err) {
+        console.error("SQL 讀取公告錯誤:", err);
+        return res.status(500).json([]);
+      }
+      res.json(results);
     }
-    res.json(results);
-  });
+  );
 });
 
-// 取得 shelter 列表
-router.get('/shelters', (req, res) => {
+// -----------------------------
+// 取得收容所列表
+// -----------------------------
+router.get("/shelters", (req, res) => {
   const sql = `
     SELECT 
       s.id,
@@ -126,11 +186,11 @@ router.get('/shelters', (req, res) => {
       ON s.id = a.shelter_id AND a.adopted = 0
     GROUP BY s.id
   `;
-  
+
   db.query(sql, (err, results) => {
     if (err) {
       console.error("SQL 讀取 shelters 錯誤:", err);
-      return res.status(500).json([]); // 回傳空陣列
+      return res.status(500).json([]);
     }
     res.json(results);
   });

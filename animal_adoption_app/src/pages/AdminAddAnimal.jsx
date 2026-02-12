@@ -9,16 +9,15 @@ export default function AdminAddAnimal() {
 
   const [shelters, setShelters] = useState([]);
   const TRAITS = [
-  { id: 1, key: "friendly", label: "親人" },
-  { id: 2, key: "shy", label: "害羞" },
-  { id: 3, key: "active", label: "活潑" },
-  { id: 4, key: "calm", label: "安靜" },
-  { id: 5, key: "good_with_kids", label: "適合有小孩家庭" },
-  { id: 6, key: "apartment_friendly", label: "適合公寓" },
-  { id: 7, key: "low_barking", label: "不愛吠叫" },
-  { id: 8, key: "high_energy", label: "高活動力" },
-];
-
+    { id: 1, key: "friendly", label: "親人" },
+    { id: 2, key: "shy", label: "害羞" },
+    { id: 3, key: "active", label: "活潑" },
+    { id: 4, key: "calm", label: "安靜" },
+    { id: 5, key: "good_with_kids", label: "適合有小孩家庭" },
+    { id: 6, key: "apartment_friendly", label: "適合公寓" },
+    { id: 7, key: "low_barking", label: "不愛吠叫" },
+    { id: 8, key: "high_energy", label: "高活動力" },
+  ];
 
   // 權限檢查
   useEffect(() => {
@@ -39,36 +38,46 @@ export default function AdminAddAnimal() {
     setShelters(data);
   };
 
- const submitAnimal = async () => {
-  try {
-    const formData = new FormData(formRef.current);
+  // -----------------------------
+  // 送出表單
+  // -----------------------------
+  const submitAnimal = async () => {
+    try {
+      const form = formRef.current;
+      const formData = new FormData(form); // 直接拿整個 form
 
-    // 暫時先不要傳圖片，避免 Cloudinary 導致 500
-    formData.delete("image");
-    // log 所有欄位
-for (let pair of formData.entries()) {
-  console.log(pair[0], pair[1]);
-}
-    // 送到 /admin，對應後端 router.post('/', ...) 
-    const res = await fetch(`${API_BASE_URL}/admin`, {
-      method: "POST",
-      body: formData,
-    });
+      // -----------------------------
+      // 處理 traits (多選)
+      // -----------------------------
+      const traitCheckboxes = form.querySelectorAll('input[name="traits"]:checked');
+      formData.delete("traits"); // 刪掉原本單值欄位
+      traitCheckboxes.forEach((checkbox) => {
+        formData.append("traits", checkbox.value);
+      });
 
-    const data = await res.json(); // 這裡改成 json
-    if (res.ok) {
-      alert(data.message);          // 成功訊息
-      formRef.current.reset();
-    } else {
-      alert("新增動物失敗: " + (data.error || "未知錯誤"));
-      console.error("新增動物錯誤:", data);
+      // -----------------------------
+      // 送出到後端
+      // -----------------------------
+      const res = await fetch(`${API_BASE_URL}/admin`, {
+        method: "POST",
+        body: formData, // multipart/form-data
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert("新增成功！"); 
+        console.log("新增動物回傳資料:", data);
+        form.reset();
+      } else {
+        alert("新增失敗: " + (data.error || "未知錯誤"));
+        console.error("新增動物錯誤:", data);
+      }
+    } catch (err) {
+      console.error("新增動物 catch 錯誤:", err);
+      alert("新增動物失敗，請查看 console");
     }
-  } catch (err) {
-    console.error("新增動物 catch 錯誤:", err);
-    alert("新增動物失敗，請查看 console");
-  }
-};
-
+  };
 
   return (
     <div className="admin-container">
@@ -76,7 +85,8 @@ for (let pair of formData.entries()) {
       <form ref={formRef} encType="multipart/form-data" className="animal-form">
         <div className="form-group">
           <label>種類</label>
-          <select name="type">
+          <select name="type" required>
+            <option value="">請選擇種類</option>
             <option value="dog">狗</option>
             <option value="cat">貓</option>
           </select>
@@ -89,7 +99,8 @@ for (let pair of formData.entries()) {
 
         <div className="form-group">
           <label>年齡</label>
-          <select name="age">
+          <select name="age" required>
+            <option value="">請選擇年齡</option>
             <option value="baby">幼年</option>
             <option value="adult">成年</option>
             <option value="senior">老年</option>
@@ -98,7 +109,8 @@ for (let pair of formData.entries()) {
 
         <div className="form-group">
           <label>體型</label>
-          <select name="size">
+          <select name="size" required>
+            <option value="">請選擇體型</option>
             <option value="small">小型</option>
             <option value="medium">中型</option>
             <option value="large">大型</option>
@@ -107,7 +119,8 @@ for (let pair of formData.entries()) {
 
         <div className="form-group">
           <label>性別</label>
-          <select name="gender">
+          <select name="gender" required>
+            <option value="">請選擇性別</option>
             <option value="male">公</option>
             <option value="female">母</option>
           </select>
@@ -115,12 +128,12 @@ for (let pair of formData.entries()) {
 
         <div className="form-group">
           <label>每月費用</label>
-          <input type="number" name="monthly_cost" required />
+          <input type="number" name="monthly_cost" required min="0" />
         </div>
 
         <div className="form-group">
           <label>圖片</label>
-          <input type="file" name="image" />
+          <input type="file" name="image" accept="image/*" />
         </div>
 
         <div className="form-group">
@@ -135,20 +148,15 @@ for (let pair of formData.entries()) {
           </select>
         </div>
 
-       <div className="form-group traits-group">
-       <h3>特徵</h3>
-        {TRAITS.map((trait) => (
-        <label key={trait.id} className="trait-label">
-        <input
-            type="checkbox"
-            name="traits"
-            value={trait.id}
-        />
-        {trait.label}
-        </label>
-  ))}
-</div>
-
+        <div className="form-group traits-group">
+          <h3>特徵</h3>
+          {TRAITS.map((trait) => (
+            <label key={trait.id} className="trait-label">
+              <input type="checkbox" name="traits" value={trait.id} />
+              {trait.label}
+            </label>
+          ))}
+        </div>
 
         <button type="button" className="submit-btn" onClick={submitAnimal}>
           新增動物
