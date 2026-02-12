@@ -13,7 +13,7 @@ const AnimalList = () => {
   const [animals, setAnimals] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
-    fetch(`${API_BASE_URL}/admin/animals`)
+    fetch(`${API_BASE_URL}/animals`)
       .then(res => res.json())
       .then(data => setAnimals(data))
       .catch(err => console.error(err));
