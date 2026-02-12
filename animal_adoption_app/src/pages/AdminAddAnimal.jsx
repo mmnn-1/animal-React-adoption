@@ -39,19 +39,30 @@ export default function AdminAddAnimal() {
     setShelters(data);
   };
 
-  // 送出表單
-  const submitAnimal = async () => {
+const submitAnimal = async () => {
+  try {
     const formData = new FormData(formRef.current);
 
+    // 送出 POST /animals
     const res = await fetch(`${API_BASE_URL}/animals`, {
       method: "POST",
       body: formData,
     });
 
-    const msg = await res.text();
-    alert(msg);
+    if (!res.ok) { // 處理 404 / 500
+      const errMsg = await res.text();
+      throw new Error(errMsg);
+    }
+
+    const data = await res.json(); //  正確解析 JSON
+    alert(data.message);           // 顯示後端訊息
     formRef.current.reset();
-  };
+
+  } catch (err) {
+    console.error("新增動物失敗:", err);
+    alert("新增動物失敗：" + err.message);
+  }
+};
 
   return (
     <div className="admin-container">
