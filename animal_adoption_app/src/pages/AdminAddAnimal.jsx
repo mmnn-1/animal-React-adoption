@@ -44,7 +44,7 @@ const submitAnimal = async () => {
     const formData = new FormData(formRef.current);
 
     // 送出 POST /animals
-    const res = await fetch(`${API_BASE_URL}/animals`, {
+    const res = await fetch(`${API_BASE_URL}/admin`, {
       method: "POST",
       body: formData,
     });
