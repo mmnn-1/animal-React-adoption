@@ -45,7 +45,10 @@ export default function AdminAddAnimal() {
 
     // 暫時先不要傳圖片，避免 Cloudinary 導致 500
     formData.delete("image");
-
+    // log 所有欄位
+for (let pair of formData.entries()) {
+  console.log(pair[0], pair[1]);
+}
     // 送到 /admin，對應後端 router.post('/', ...) 
     const res = await fetch(`${API_BASE_URL}/admin`, {
       method: "POST",
