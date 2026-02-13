@@ -15,6 +15,8 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_KEY,
   api_secret: process.env.CLOUDINARY_SECRET,
 });
+console.log("Cloudinary key:", process.env.CLOUDINARY_KEY);
+
 
 // -----------------------------
 // 新增動物（含圖片 + traits）
