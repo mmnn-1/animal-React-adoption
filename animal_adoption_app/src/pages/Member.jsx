@@ -31,7 +31,7 @@ function Member() {
               <img
                 src={
                   a.image_url
-                    ? `${API_BASE_URL}${a.image_url}`
+                    ? a.image_url
                     : `${API_BASE_URL}/uploads/no-image.png`
                 }
                 alt={a.breed}
