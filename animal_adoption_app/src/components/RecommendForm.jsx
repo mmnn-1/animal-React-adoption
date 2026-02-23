@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "./recommendForm.css";
 
+
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 const TRAITS = [
   { id: 1, key: "friendly", label: "親人" },
   { id: 2, key: "active", label: "活潑" },
@@ -45,7 +47,7 @@ export default function Recommend() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:3000/api/recommend", {
+      const res = await fetch(`${API_BASE_URL}/api/recommend`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
