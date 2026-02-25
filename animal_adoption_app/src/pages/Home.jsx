@@ -4,7 +4,7 @@ import AnimalList from "../components/AnimalList";
 import MapSection from "../components/MapSection";
 
 import "./Home.css";
-import dogImage from "../assets/dog.jpg";
+import dogImage from "../assets/dogcat.jpg";
 
 function Home() {
   return (
