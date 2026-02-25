@@ -24,6 +24,13 @@ function Home() {
     <img src={dogImage} alt="可愛狗狗" />
   </div>
 </section>
+  <section className="content">
+        <AnimalList />
+      </section>
+      <section className="map-section">
+        <h2>收養地點分佈</h2>
+        <MapSection />
+      </section>
     </div>
   );
 }
