@@ -19,7 +19,6 @@ function Home() {
           <p className="hero-subtitle">
             目前有這些可愛的浪浪，正在等待你的擁抱
           </p>
-          <button className="hero-btn">立即看看浪浪</button>
         </div>
         <div className="hero-image">
           <img src={dogImage} alt="可愛狗狗" />
