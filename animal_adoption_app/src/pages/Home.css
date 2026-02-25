@@ -49,14 +49,14 @@
 }
 /* 右側圖片改亮化，並加半透明白色遮罩 */
 .hero img {
-  width: 350px;  /* 適度縮小 */
+  filter: brightness(1.2); /* 提亮 20% */
+  width: 350px;
   border-radius: 30px;
   box-shadow: 0 20px 40px rgba(0,0,0,0.15);
   position: relative;
   z-index: 2;
 }
 
-/* 半透明遮罩 */
 .hero::after {
   content: "";
   position: absolute;
@@ -64,9 +64,9 @@
   top: 0;
   width: 400px; /* 遮罩範圍與圖片接近 */
   height: 100%;
-  background: rgba(255,255,255,0.2);
+  background: linear-gradient(to left, rgba(255,255,255,0.2), rgba(255,255,255,0));
   border-radius: 30px 0 0 30px;
-  z-index: 1;
+  z-index: 2; /* 放在圖片上面，讓右側稍淡 */
 }
 
 .hero-title {
