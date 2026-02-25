@@ -38,6 +38,7 @@ function Login() {
       localStorage.setItem("userId", data.userId);
       localStorage.setItem("role", data.role);
 
+      window.dispatchEvent(new Event("storage"));
       // 依角色跳轉
       if (data.role === "admin") {
         navigate("/DashBoard");//admin頁面

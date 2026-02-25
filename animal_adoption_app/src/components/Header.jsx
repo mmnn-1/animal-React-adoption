@@ -1,13 +1,28 @@
 // Header.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Header.css"; // 可以自訂 CSS 或內嵌 style
 
 export default function Header() {
   const navigate = useNavigate();
 
-  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-  const userRole = localStorage.getItem("role");
+  const [isLoggedIn,setIsLoggedIn] = useState(false);
+  const[userRole,setUserRole] = useState("");
+
+  useEffect(()=>{
+    const loginState = localStorage.getItem("loggedIn")==="true";
+    setIsLoggedIn(loginState);
+    setUserRole(localStorage.getItem("role")||"");
+},[]);
+
+  useEffect(()=>{
+    const handleStorageChange=()=>{
+      setIsLoggedIn(localStorage.getItem("loggedIn")==="true");
+      setUserRole(localStorage.getItem("role")||"");
+    };
+    window.addEventListener("storage",handleStorageChange);
+  },[]);
+
 
   // 導覽按鈕點擊事件
   const goTo = (path) => {
@@ -16,6 +31,8 @@ export default function Header() {
 
   const handleLogout = () => {
     localStorage.clear();
+    setIsLoggedIn(false);
+    setUserRole("");
     alert("您已登出");
     navigate("/");
   };
