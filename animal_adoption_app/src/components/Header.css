@@ -1,19 +1,24 @@
+/* Header.css */
+
 .header-nav {
   background-color: #ff8c42;
   padding: 10px 0;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  overflow-x: auto; /* 防止按鈕超出時被裁掉 */
 }
 
 .nav-list {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0 20px;
   display: flex;
-  justify-content: center; /* 按鈕置中 */
-  gap: 15px; /* 按鈕間距 */
+  justify-content: center;
+  gap: 15px;       /* 按鈕間距 */
+  flex-wrap: nowrap; /* 不換行 */
 }
 
 .nav-list li {
+  display: flex; /* 保持按鈕橫向排列 */
 }
 
 .nav-list button {
@@ -25,15 +30,27 @@
   color: white;
   cursor: pointer;
   transition: background-color 0.3s;
+  min-width: 80px;      /* 手機按鈕不會太窄 */
+  white-space: nowrap;  /* 文字不換行 */
 }
 
 .nav-list button:hover {
   background-color: rgba(255,255,255,0.4);
 }
+
+/* 手機 RWD */
 @media (max-width: 768px) {
   .nav-list {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
+    flex-direction: row;   /* 保持橫向 */
+    justify-content: flex-start; /* 靠左對齊 */
+    gap: 10px;             /* 手機間距稍小 */
+    padding: 10px;
+    overflow-x: auto;      /* 超出可左右滑動 */
+  }
+
+  .nav-list button {
+    min-width: 60px;       /* 手機寬度稍小 */
+    padding: 8px 12px;
+    font-size: 14px;
   }
 }
