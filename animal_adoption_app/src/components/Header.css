@@ -5,6 +5,8 @@
   padding: 10px 0;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   overflow-x: auto; /* 防止按鈕超出時被裁掉 */
+  z-index: 10;          /* 比 hero 或遮罩層高 */
+  position: relative;
 }
 
 .nav-list {
@@ -15,6 +17,8 @@
   justify-content: center;
   gap: 15px;       /* 按鈕間距 */
   flex-wrap: nowrap; /* 不換行 */
+  z-index: 10;          /* 比 hero 或遮罩層高 */
+  position: relative;
 }
 
 .nav-list li {
